@@ -1,21 +1,12 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { connect } from 'react-redux'
 
-const App = ({store, dispatch}) => {
-    console.log(dispatch);
-    return(
-        <div>
-            <p>Count: {store.count}</p>
-            <button onClick={() => dispatch.increment() }>Increase</button>
-            <button onClick={() => dispatch.decrement() }>Decrease</button>
-        </div>
-    )
-}
-
+/* Model */
 const mapStateToProps = (state /*, ownProps*/) => {
     return {
         store: {
-            count: state.count
+            count: state.count,
+            determiner: state.determiner
         }
     }
 }
@@ -23,12 +14,64 @@ const mapStateToProps = (state /*, ownProps*/) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         dispatch:{
-            increment: () => dispatch({ type: 'Increment' }),
-            decrement: () => dispatch({ type: 'Decrement' }),
+            
+            increment: (value) => { 
+                dispatch({
+                    type: 'Increment',
+                    payload: {
+                        value: value
+                    }
+                });
+            },
+            decrement: (value) => { 
+                dispatch({
+                    type: 'Decrement',
+                    payload: {
+                        value: value
+                    }
+                });
+            },
+            setDeterminer: (determiner) => {
+                dispatch({
+                    type: 'SetDeterminer',
+                    payload: {
+                        determiner: +determiner
+                    }
+                })
+            }
+
         }
     }
 }
 
+/* View */
+const App = ({store, dispatch}) => {
+    const {
+        count,
+        determiner
+    } = store;
+
+    const {
+        increment,
+        decrement,
+        setDeterminer
+    } = dispatch;
+
+    return(
+        <Fragment>
+            <p>Count: {count}</p>
+            <input
+                type="number"
+                placeholder="determiner"
+                onChange={(e) => setDeterminer(e.target.value)}
+                value={determiner} />
+            <button onClick={() => increment(determiner) }>Increase</button>
+            <button onClick={() => decrement(determiner) }>Decrease</button>
+        </Fragment>
+    )
+}
+
+/* Control */
 export default connect(
     mapStateToProps,
     mapDispatchToProps
